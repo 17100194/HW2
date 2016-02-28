@@ -3,7 +3,7 @@
 = form_tag movies_path do
 
   = label :movie, :title, 'Title'
-  = text_field :movie, 'title'
+  = text_field :movie, 'title', :required => true
 
   = label :movie, :rating, 'Rating'
   = select :movie, :rating, ['G','PG','PG-13','R','NC-17']
@@ -12,3 +12,5 @@
   = date_select :movie, :release_date
 
   = submit_tag 'Save Changes'
+  
+= link_to 'Back to movie list', movies_path

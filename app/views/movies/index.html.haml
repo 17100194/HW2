@@ -1,6 +1,27 @@
 -#  This file is app/views/movies/index.html.haml
 %h1 All Movies
 
+= form_tag movies_path, :method => :get, id: "ratings_form" do
+  Include: 
+  - @all_ratings.each do |rating|
+    = rating
+    = check_box_tag "ratings[#{rating}]", 1, if params[:ratings]; params[:ratings].include?(rating); else; @ratings[rating] end
+  = submit_tag 'Refresh', :id=> "ratings_submit"
+
+= form_tag movies_deletebytitle_path, :method => 'get' do 
+
+  = label :movie, :title, 'Enter Movie Title to Delete'
+  = text_field :moviedelete, 'title', :required => true
+  
+  = submit_tag 'Delete', data: { confirm: "Are you sure?" }
+
+= form_tag movies_deletebyrating_path, :method => 'get' do 
+
+  = label :movie, :rating, 'Delete Movie(s) by Rating'
+  = select :moviedelete, :rating, ['G','PG','PG-13','R','NC-17']
+  
+  = submit_tag 'Delete', data: { confirm: "Are you sure?" }
+
 %table#movies
   %thead
     %tr
@@ -10,10 +31,13 @@
       %th More Info
   %tbody
     - @movies.each do |movie|
-      %tr
+      %tr 
         %td= movie.title 
         %td= movie.rating
         %td= movie.release_date
-        %td= link_to "More about #{movie.title}", movie_path(movie)
+        %td= link_to "More about #{movie.title}", movie_path(movie), {class: "nice-link"}
 
-= link_to 'Add new movie', new_movie_path
+= link_to 'Add new movie', new_movie_path, {style: "color: turquoise", class: "nice-link"} 
+
+= link_to 'Update a Movie', movies_updatemovie_path, {style: "color: turquoise", class: "nice-link"}
+
