@@ -13,10 +13,30 @@ class MoviesController < ApplicationController
   def index 
     @all_ratings = ['G','PG','PG-13','R','NC-17']
     @ratings =  {"G" => "1", "PG" => "1", "PG-13" => "1", "R" => "1", "NC-17" => "1"}
-    if params[:ratings] == nil
-      @movies = Movie.order("#{params[:sort_by]}")
+    if params[:ratings] == nil and params[:sort_by] == nil
+      session[:ratings] = @ratings
+      session[:sort_by] = nil
+    end
+    if session.has_key?(:ratings) && params.has_key?(:sort_by)
+      session[:sort_by] = params[:sort_by]
+      @ratings = session[:ratings]
+      @movies = Movie.where(rating: @ratings.keys).order(params[:sort_by])
+    elsif
+      session.has_key?(:sort_by) && params.has_key?(:ratings)
+      @ratings = params[:ratings]
+      session[:ratings] = @ratings
+      @movies = Movie.where(rating: @ratings.keys).order(session[:sort_by])
+    elsif
+      session[:ratings] == nil && params.has_key?(:sort_by)
+      session[:sort_by] = params[:sort_by]
+      @movies = Movie.order(params[:sort_by])
+    elsif
+      session[:sort_by] == nil && params.has_key?(:ratings)
+      @ratings = params[:ratings]
+      @movies = Movie.where(rating: @ratings.keys)
+      session[:ratings] = @ratings
     else
-      @movies = Movie.where(rating: params[:ratings].keys)
+      @movies = Movie.all
     end
   end
 
